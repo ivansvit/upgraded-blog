@@ -1,7 +1,7 @@
 {% include 'header.html' %}
 
 <!-- Page Header -->
-<header class="masthead" style="background-image: url({{url_for('static', filename='assets/img/post-bg.jpg')}})">
+<header class="masthead" style="background-image: url({{post.img_url}})">
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
@@ -29,9 +29,11 @@
                 </p>
             </div>
         </div>
+        {% if current_user.id == 1 %}
         <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase"
                                                         href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
         </div>
+        {% endif %}
     </div>
 </article>
 
