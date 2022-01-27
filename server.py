@@ -6,12 +6,13 @@ from flask_ckeditor import CKEditor
 from flask_login import login_user, LoginManager, login_required, current_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
+from flask_gravatar import Gravatar
 import database
-from newblogform import CreatePostForm, CreateUserForm, LoginForm
+from newblogform import CreatePostForm, CreateUserForm, LoginForm, CommentForm
 from datetime import datetime
 import os
 
-# TODO 3. Update bacground images for each page
+# TODO Add comments to code
 
 feedback = FeedbackMessage()
 app = Flask(__name__)
@@ -32,6 +33,17 @@ login_manager.init_app(app)
 def load_user(user_id):
     return database.User.query.get(user_id)
 
+
+# Gravatar initialization
+gravatar = Gravatar(
+    app,
+    rating='g',
+    default='retro',
+    force_default=False,
+    force_lower=False,
+    use_ssl=False,
+    base_url=None
+)
 
 # Create admin only access decorator
 def admin_only(func):
@@ -84,11 +96,20 @@ def contact():
 
 
 # Post page
-@app.route("/post/<id>")
+@app.route("/post/<id>", methods=["GET", "POST"])
 def post_page(id):
     blog_posts = database.read_all()
+    comment_form = CommentForm()
     post = blog_posts[int(id) - 1]
-    return render_template("post.html", post=post)
+    if comment_form.validate_on_submit():
+        if not current_user.is_authenticated:
+            error = "You need to login or register to comment"
+            flash(error)
+            return redirect(url_for("login"))
+
+        comment_text = comment_form.comment.data
+        database.add_new_comment(comment_text, current_user.id, post.id)
+    return render_template("post.html", post=post, comment=comment_form)
 
 
 # New post page
