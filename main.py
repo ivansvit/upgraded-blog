@@ -215,6 +215,11 @@ def logout():
     logout_user()
     return redirect(url_for("home_page"))
 
+# Function to inject current year to the template
+@app.context_processor
+def inject_year():
+    return {'year': datetime.now().year}
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host = '0.0.0.0', port = 5000)

@@ -99,6 +99,7 @@ def add_new_comment(text, author_id, post_id):
     db.session.add(comment)
     db.session.commit()
 
+
 # Read all comment
 def read_all_comments():
     all_comments = db.session.query(Comment).all()
