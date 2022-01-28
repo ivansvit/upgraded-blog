@@ -34,7 +34,7 @@ class Comment(db.Model):
     parent_post = relationship("BlogPost", back_populates="comments")
 
 # Run only once for creating a database
-# db.create_all()
+db.create_all()
 
 # Read all blog posts
 def read_all():
